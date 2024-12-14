@@ -6,3 +6,11 @@
 
 # Build files (TypeScript 컴파일 후 생성되는 파일)
 dist/
+
+# Log files (application logs)
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
