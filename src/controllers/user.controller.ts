@@ -1,30 +1,44 @@
 import { Request, Response } from 'express';
 import User from '../models/User';
-import bcrypt from 'bcryptjs';
 
-export const createUser = async (
+export const getUserProfile = async (
   req: Request,
   res: Response,
 ): Promise<void> => {
   try {
-    const { email, password, name, birth_date, role } = req.body;
-    if (!email || !password || !name || !birth_date) {
-      res.status(400).json({ message: '모든 필드를 입력해주세요.' });
-    }
-    const existingUser = await User.findOne({ where: { email } });
-    if (existingUser) {
-      res.status(409).json({ message: '이미 존재하는 이메일입니다.' });
-    }
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = await User.create({
-      email,
-      password: hashedPassword,
-      name,
-      birth_date,
-      role: role || 'user',
+    const { id } = req.params;
+
+    const user = await User.findByPk(id, {
+      attributes: [
+        'id',
+        'name',
+        'email',
+        'birth_date',
+        'role',
+        'created_at',
+        'updated_at',
+      ],
     });
-    res.status(201).json({ message: '회원가입 성공', userId: newUser.id });
+
+    if (!user) {
+      res.status(404).json({
+        status: 'fail',
+        code: 404,
+        message: '사용자를 찾을 수 없습니다.',
+      });
+      return;
+    }
+
+    res.status(200).json({
+      status: 'success',
+      user,
+    });
   } catch (error) {
-    res.status(400).json({ message: (error as Error).message });
+    res.status(500).json({
+      status: 'error',
+      code: 500,
+      message: '서버 내부 오류가 발생했습니다.',
+      error: (error as Error).message,
+    });
   }
 };

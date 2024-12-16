@@ -1,18 +1,26 @@
-import { DataTypes, Model } from 'sequelize';
+import { DataTypes, Model, Optional } from 'sequelize';
 import sequelize from '../database';
 
 interface UserAttributes {
-  id?: number;
+  id: number;
   email: string;
   password: string;
   name: string;
   birth_date: string;
-  role?: 'user' | 'admin';
+  role: 'user' | 'admin';
   created_at?: Date;
   updated_at?: Date;
 }
 
-export class User extends Model<UserAttributes> implements UserAttributes {
+type UserCreationAttributes = Optional<
+  UserAttributes,
+  'id' | 'created_at' | 'updated_at'
+>;
+
+export class User
+  extends Model<UserAttributes, UserCreationAttributes>
+  implements UserAttributes
+{
   public id!: number;
   public email!: string;
   public password!: string;
@@ -52,20 +60,13 @@ User.init(
       allowNull: false,
       defaultValue: 'user',
     },
-    created_at: {
-      type: DataTypes.DATE,
-      defaultValue: DataTypes.NOW,
-    },
-    updated_at: {
-      type: DataTypes.DATE,
-      defaultValue: DataTypes.NOW,
-    },
   },
   {
     sequelize,
     tableName: 'Users',
     freezeTableName: true,
-    timestamps: false,
+    timestamps: true,
+    underscored: true,
   },
 );
 
