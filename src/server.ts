@@ -1,5 +1,6 @@
 import app from './app';
 import sequelize from './database';
+import './models';
 
 const PORT = process.env.PORT || 8080;
 
