@@ -9,7 +9,7 @@ export const checkClassRole = (requiredRole: 'instructor') => {
   ): Promise<void> => {
     try {
       const userId = req.user?.id;
-      const classId = req.params.classId;
+      const classId = Number(req.params.classId);
 
       if (!userId || !classId) {
         res.status(400).json({ status: 'fail', message: '잘못된 요청입니다.' });
