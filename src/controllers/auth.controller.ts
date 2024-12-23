@@ -38,17 +38,15 @@ export const signup = async (req: Request, res: Response): Promise<void> => {
       role: role || 'user',
     });
 
-    const token = jwt.sign(
-      { id: newUser.id, email: newUser.email },
-      JWT_SECRET,
-      { expiresIn: '1d' },
-    );
+    const token = jwt.sign({ id: newUser.id, role: newUser.role }, JWT_SECRET, {
+      expiresIn: '1d',
+    });
 
     res.setHeader('Authorization', `Bearer ${token}`);
     res.status(201).json({
       status: 'success',
       message: '회원가입 성공',
-      user: { name: newUser.name },
+      user: { name: newUser.name, role: newUser.role },
     });
   } catch (error) {
     res.status(500).json({
@@ -93,7 +91,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, {
+    const token = jwt.sign({ id: user.id, role: user.role }, JWT_SECRET, {
       expiresIn: '1d',
     });
 
@@ -101,7 +99,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     res.status(200).json({
       status: 'success',
       message: '로그인 성공',
-      user: { name: user.name },
+      user: { name: user.name, role: user.role },
     });
   } catch (error) {
     res.status(500).json({
