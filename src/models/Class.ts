@@ -10,6 +10,7 @@ interface ClassAttributes {
   visibility: 'public' | 'private';
   created_at?: Date;
   updated_at?: Date;
+  created_by: number;
   members?: ClassMember[];
 }
 
@@ -29,6 +30,7 @@ export class Class
   public visibility!: 'public' | 'private';
   public created_at!: Date;
   public updated_at!: Date;
+  public created_by!: number;
   public members?: ClassMember[];
 }
 
@@ -55,6 +57,10 @@ Class.init(
       type: DataTypes.ENUM('public', 'private'),
       allowNull: false,
       defaultValue: 'private',
+    },
+    created_by: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
     },
   },
   {

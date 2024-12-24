@@ -36,6 +36,7 @@ export const createClass = async (
         main_image: main_image || null,
         description: description || null,
         visibility: visibility || 'private',
+        created_by: userId,
       },
       { transaction },
     );
@@ -59,6 +60,7 @@ export const createClass = async (
         name: newClass.name,
         visibility: newClass.visibility,
         created_at: newClass.created_at,
+        created_by: newClass.created_by,
       },
     });
   } catch (error) {
