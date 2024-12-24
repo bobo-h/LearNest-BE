@@ -56,7 +56,7 @@ export const createInvite = async (
 export const joinClass = async (req: Request, res: Response): Promise<void> => {
   if (!req.user?.id) {
     res
-      .status(401)
+      .status(400)
       .json({ status: 'fail', message: '사용자 인증이 필요합니다.' });
     return;
   }
@@ -80,7 +80,7 @@ export const joinClass = async (req: Request, res: Response): Promise<void> => {
     const invite = await Invite.findByPk(decoded.invite_id);
 
     if (!invite) {
-      res.status(404).json({
+      res.status(400).json({
         status: 'fail',
         message: '유효하지 않은 초대 링크입니다.',
       });

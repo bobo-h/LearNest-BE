@@ -22,7 +22,7 @@ export const signup = async (req: Request, res: Response): Promise<void> => {
     if (existingUser) {
       res.status(409).json({
         status: 'fail',
-        code: 409,
+        code: 400,
         message: '이미 존재하는 이메일입니다.',
       });
       return;
@@ -73,9 +73,9 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 
     const user = await User.findOne({ where: { email } });
     if (!user) {
-      res.status(404).json({
+      res.status(400).json({
         status: 'fail',
-        code: 404,
+        code: 400,
         message: '해당 이메일의 사용자를 찾을 수 없습니다.',
       });
       return;
@@ -83,9 +83,9 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      res.status(401).json({
+      res.status(400).json({
         status: 'fail',
-        code: 401,
+        code: 400,
         message: '비밀번호가 일치하지 않습니다.',
       });
       return;
