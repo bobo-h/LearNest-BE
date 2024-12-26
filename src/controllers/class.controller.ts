@@ -9,7 +9,10 @@ export const createClass = async (
 ): Promise<void> => {
   const transaction = await sequelize.transaction();
   try {
-    const { name, main_image, description, visibility } = req.body;
+    const { name, description, visibility } = req.body;
+    const file = req.file;
+
+    console.log('req.body:', req.body);
 
     const userId = req.user?.id;
     if (!userId) {
@@ -30,7 +33,7 @@ export const createClass = async (
       return;
     }
 
-    const existingClass = await Class.findOne({ where: { name } });
+    const existingClass = await Class.findOne({ where: { name }, transaction });
     if (existingClass) {
       res.status(409).json({
         status: 'fail',
@@ -43,7 +46,7 @@ export const createClass = async (
     const newClass = await Class.create(
       {
         name,
-        main_image: main_image || null,
+        main_image: file ? file.path : null,
         description: description || null,
         visibility: visibility || 'private',
         created_by: userId,
@@ -71,6 +74,7 @@ export const createClass = async (
         visibility: newClass.visibility,
         created_at: newClass.created_at,
         created_by: newClass.created_by,
+        main_image: newClass.main_image,
       },
     });
   } catch (error) {
