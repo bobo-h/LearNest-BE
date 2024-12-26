@@ -30,6 +30,16 @@ export const createClass = async (
       return;
     }
 
+    const existingClass = await Class.findOne({ where: { name } });
+    if (existingClass) {
+      res.status(409).json({
+        status: 'fail',
+        code: 409,
+        message: '중복된 클래스 이름입니다.',
+      });
+      return;
+    }
+
     const newClass = await Class.create(
       {
         name,
@@ -65,6 +75,17 @@ export const createClass = async (
     });
   } catch (error) {
     await transaction.rollback();
+
+    // 동시에 같은 이름의 클래스를 생성하고 있을 때를 대비한 로직
+    if ((error as Error).name === 'SequelizeUniqueConstraintError') {
+      res.status(409).json({
+        status: 'fail',
+        code: 409,
+        message: '중복된 클래스 이름입니다.',
+      });
+      return;
+    }
+
     console.error('Error creating class:', error);
     res.status(500).json({
       status: 'error',
