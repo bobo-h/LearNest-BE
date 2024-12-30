@@ -8,11 +8,9 @@ export const createClass = async (
   res: Response,
 ): Promise<void> => {
   const transaction = await sequelize.transaction();
-  try {
-    const { name, description, visibility } = req.body;
-    const file = req.file;
 
-    console.log('req.body:', req.body);
+  try {
+    const { name, description, visibility, mainImageUrl } = req.body;
 
     const userId = req.user?.id;
     if (!userId) {
@@ -28,7 +26,7 @@ export const createClass = async (
       res.status(400).json({
         status: 'fail',
         code: 400,
-        message: 'Name은 필수 입력 값입니다.',
+        message: 'Class Name은 필수 입력 값입니다.',
       });
       return;
     }
@@ -46,7 +44,7 @@ export const createClass = async (
     const newClass = await Class.create(
       {
         name,
-        main_image: file ? file.path : null,
+        main_image: mainImageUrl || null,
         description: description || null,
         visibility: visibility || 'private',
         created_by: userId,
@@ -79,17 +77,6 @@ export const createClass = async (
     });
   } catch (error) {
     await transaction.rollback();
-
-    // 동시에 같은 이름의 클래스를 생성하고 있을 때를 대비한 로직
-    if ((error as Error).name === 'SequelizeUniqueConstraintError') {
-      res.status(409).json({
-        status: 'fail',
-        code: 409,
-        message: '중복된 클래스 이름입니다.',
-      });
-      return;
-    }
-
     console.error('Error creating class:', error);
     res.status(500).json({
       status: 'error',
@@ -97,7 +84,6 @@ export const createClass = async (
       message: '서버 내부 오류가 발생했습니다.',
       error: (error as Error).message,
     });
-    return;
   }
 };
 
