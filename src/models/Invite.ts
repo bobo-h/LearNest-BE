@@ -18,8 +18,8 @@ export class Invite
   public id!: number;
   public class_id!: number;
   public created_by!: number;
-  public expires_at!: Date;
-  public created_at!: Date;
+  public readonly expires_at!: Date;
+  public readonly created_at!: Date;
 }
 
 Invite.init(

@@ -28,6 +28,7 @@ export const createUnit = async (
     res.status(500).json({
       status: 'error',
       message: '단원 생성 중 오류가 발생했습니다.',
+      error: (error as Error).message,
     });
   }
 };
@@ -44,7 +45,7 @@ export const updateUnit = async (
     if (!unit) {
       res.status(404).json({
         status: 'fail',
-        message: 'Unit을 찾을 수 없습니다.',
+        message: '단원을 찾을 수 없습니다.',
       });
       return;
     }
@@ -52,7 +53,7 @@ export const updateUnit = async (
     if (unit.deleted_at) {
       res.status(400).json({
         status: 'fail',
-        message: '삭제된 Unit은 수정할 수 없습니다.',
+        message: '삭제된 단원은 수정할 수 없습니다.',
       });
       return;
     }
@@ -60,13 +61,14 @@ export const updateUnit = async (
     await unit.update({ name, description });
     res.status(200).json({
       status: 'success',
-      message: 'Unit이 성공적으로 수정되었습니다.',
+      message: '단원이 성공적으로 수정되었습니다.',
       unit,
     });
   } catch (error) {
     res.status(500).json({
       status: 'error',
-      message: 'Unit 수정 중 오류가 발생했습니다.',
+      message: '단원 수정 중 오류가 발생했습니다.',
+      error: (error as Error).message,
     });
   }
 };
@@ -82,7 +84,7 @@ export const deleteUnit = async (
     if (!unit) {
       res.status(404).json({
         status: 'fail',
-        message: 'Unit을 찾을 수 없습니다.',
+        message: '단원을 찾을 수 없습니다.',
       });
       return;
     }
@@ -91,12 +93,13 @@ export const deleteUnit = async (
 
     res.status(200).json({
       status: 'success',
-      message: 'Unit이 성공적으로 삭제되었습니다.',
+      message: '단원이 성공적으로 삭제되었습니다.',
     });
   } catch (error) {
     res.status(500).json({
       status: 'error',
-      message: 'Unit 삭제 중 오류가 발생했습니다.',
+      message: '단원 삭제 중 오류가 발생했습니다.',
+      error: (error as Error).message,
     });
   }
 };

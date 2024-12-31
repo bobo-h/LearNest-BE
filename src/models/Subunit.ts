@@ -6,7 +6,7 @@ interface SubunitAttributes {
   unit_id: number;
   name: string;
   description?: string | null;
-  content?: string | null;
+  content?: any | null;
   materials_path?: string | null;
   created_at?: Date;
   updated_at?: Date;
@@ -32,7 +32,7 @@ class Subunit
   public unit_id!: number;
   public name!: string;
   public description!: string | null;
-  public content!: string | null;
+  public content!: any | null;
   public materials_path!: string | null;
   public readonly created_at!: Date;
   public readonly updated_at!: Date;
@@ -49,7 +49,7 @@ Subunit.init(
     unit_id: { type: DataTypes.INTEGER, allowNull: false },
     name: { type: DataTypes.STRING(100), allowNull: false },
     description: { type: DataTypes.TEXT, allowNull: true },
-    content: { type: DataTypes.TEXT, allowNull: true },
+    content: { type: DataTypes.JSON, allowNull: true },
     materials_path: { type: DataTypes.STRING(255), allowNull: true },
     deleted_at: { type: DataTypes.DATE, allowNull: true },
   },
