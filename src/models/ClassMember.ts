@@ -7,11 +7,12 @@ interface ClassMemberAttributes {
   user_id: number;
   role: 'instructor' | 'student';
   joined_at: Date;
+  deleted_at?: Date | null;
 }
 
 type ClassMemberCreationAttributes = Optional<
   ClassMemberAttributes,
-  'id' | 'joined_at'
+  'id' | 'joined_at' | 'deleted_at'
 >;
 
 export class ClassMember
@@ -22,7 +23,8 @@ export class ClassMember
   public class_id!: number;
   public user_id!: number;
   public role!: 'instructor' | 'student';
-  public joined_at!: Date;
+  public readonly joined_at!: Date;
+  public readonly deleted_at!: Date | null;
 }
 
 ClassMember.init(
@@ -49,6 +51,7 @@ ClassMember.init(
       type: DataTypes.DATE,
       defaultValue: DataTypes.NOW,
     },
+    deleted_at: { type: DataTypes.DATE, allowNull: true },
   },
   {
     sequelize,
@@ -56,6 +59,8 @@ ClassMember.init(
     freezeTableName: true,
     timestamps: false,
     underscored: true,
+    paranoid: true,
+    deletedAt: 'deleted_at',
   },
 );
 

@@ -10,11 +10,12 @@ interface UserAttributes {
   role: 'user' | 'admin';
   created_at?: Date;
   updated_at?: Date;
+  deleted_at?: Date | null;
 }
 
 type UserCreationAttributes = Optional<
   UserAttributes,
-  'id' | 'created_at' | 'updated_at'
+  'id' | 'created_at' | 'updated_at' | 'deleted_at'
 >;
 
 export class User
@@ -27,8 +28,9 @@ export class User
   public name!: string;
   public birth_date!: string;
   public role!: 'user' | 'admin';
-  public created_at!: Date;
-  public updated_at!: Date;
+  public readonly created_at!: Date;
+  public readonly updated_at!: Date;
+  public readonly deleted_at!: Date | null;
 }
 
 User.init(
@@ -60,6 +62,7 @@ User.init(
       allowNull: false,
       defaultValue: 'user',
     },
+    deleted_at: { type: DataTypes.DATE, allowNull: true },
   },
   {
     sequelize,
@@ -67,6 +70,8 @@ User.init(
     freezeTableName: true,
     timestamps: true,
     underscored: true,
+    paranoid: true,
+    deletedAt: 'deleted_at',
   },
 );
 

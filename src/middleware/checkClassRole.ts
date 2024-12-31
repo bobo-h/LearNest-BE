@@ -1,7 +1,8 @@
+import { Op } from 'sequelize';
 import { Request, Response, NextFunction } from 'express';
 import ClassMember from '../models/ClassMember';
 
-export const checkClassRole = (requiredRole: 'instructor') => {
+export const checkClassRole = (allowedRoles: string[]) => {
   return async (
     req: Request,
     res: Response,
@@ -9,7 +10,7 @@ export const checkClassRole = (requiredRole: 'instructor') => {
   ): Promise<void> => {
     try {
       const userId = req.user?.id;
-      const classId = Number(req.params.classId);
+      const classId = req.params.classId;
 
       if (!userId || !classId) {
         res.status(400).json({ status: 'fail', message: '잘못된 요청입니다.' });
@@ -17,7 +18,11 @@ export const checkClassRole = (requiredRole: 'instructor') => {
       }
 
       const membership = await ClassMember.findOne({
-        where: { user_id: userId, class_id: classId, role: requiredRole },
+        where: {
+          user_id: userId,
+          class_id: classId,
+          role: { [Op.in]: allowedRoles },
+        },
       });
 
       if (!membership) {

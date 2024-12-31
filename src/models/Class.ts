@@ -11,12 +11,18 @@ interface ClassAttributes {
   created_at?: Date;
   updated_at?: Date;
   created_by: number;
+  deleted_at?: Date | null;
   members?: ClassMember[];
 }
 
 type ClassCreationAttributes = Optional<
   ClassAttributes,
-  'id' | 'main_image' | 'description' | 'created_at' | 'updated_at'
+  | 'id'
+  | 'main_image'
+  | 'description'
+  | 'created_at'
+  | 'updated_at'
+  | 'deleted_at'
 >;
 
 export class Class
@@ -28,9 +34,10 @@ export class Class
   public main_image!: string | null;
   public description!: string | null;
   public visibility!: 'public' | 'private';
-  public created_at!: Date;
-  public updated_at!: Date;
   public created_by!: number;
+  public readonly created_at!: Date;
+  public readonly updated_at!: Date;
+  public readonly deleted_at!: Date | null;
   public members?: ClassMember[];
 }
 
@@ -63,6 +70,7 @@ Class.init(
       type: DataTypes.INTEGER,
       allowNull: false,
     },
+    deleted_at: { type: DataTypes.DATE, allowNull: true },
   },
   {
     sequelize,
@@ -70,6 +78,8 @@ Class.init(
     freezeTableName: true,
     timestamps: true,
     underscored: true,
+    paranoid: true,
+    deletedAt: 'deleted_at',
   },
 );
 

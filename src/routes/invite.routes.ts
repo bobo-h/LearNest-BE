@@ -9,7 +9,7 @@ const router = Router();
 router.post(
   '/:classId',
   authenticate,
-  checkClassRole('instructor'),
+  checkClassRole(['instructor']),
   createInvite,
 );
 router.post('/:classId/accept/:token', authenticate, joinClass);
