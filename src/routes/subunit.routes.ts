@@ -1,15 +1,18 @@
 import { Router } from 'express';
 import {
+  getSubunitDetails,
   createSubunit,
   updateSubunit,
   deleteSubunit,
 } from '../controllers/subunit.controller';
 import { authenticate } from '../middleware/authenticate';
 import { checkClassRole } from '../middleware/checkClassRole';
+import { checkClassMember } from '../middleware/checkClassMember';
 import { checkUnitExists } from '../middleware/checkUnitExists';
 
 const router = Router({ mergeParams: true });
 
+router.get('/:id', authenticate, checkClassMember, getSubunitDetails);
 router.post(
   '/',
   authenticate,

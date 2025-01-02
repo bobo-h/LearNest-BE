@@ -89,3 +89,36 @@ export const deleteSubunit = async (
     });
   }
 };
+
+export const getSubunitDetails = async (
+  req: Request,
+  res: Response,
+): Promise<void> => {
+  try {
+    const { id } = req.params;
+
+    const subunit = await Subunit.findOne({
+      where: { id },
+      attributes: ['id', 'name', 'description', 'content', 'materials_path'],
+    });
+
+    if (!subunit) {
+      res.status(404).json({
+        status: 'fail',
+        message: '소단원을 찾을 수 없습니다.',
+      });
+      return;
+    }
+
+    res.status(200).json({
+      status: 'success',
+      subunit,
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: 'error',
+      message: '소단원 상세 정보를 가져오는 중 오류가 발생했습니다.',
+      error: (error as Error).message,
+    });
+  }
+};
