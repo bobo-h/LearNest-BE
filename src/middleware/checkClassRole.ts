@@ -13,7 +13,7 @@ export const checkClassRole = (allowedRoles: string[]) => {
       const { classId } = req.params;
 
       if (!userId || !classId) {
-        res.status(400).json({ status: 'fail', message: '잘못된 요청입니다.' });
+        res.status(400).json({ status: 'fail', message: 'Invalid request.' });
         return;
       }
 
@@ -26,7 +26,9 @@ export const checkClassRole = (allowedRoles: string[]) => {
       });
 
       if (!membership) {
-        res.status(403).json({ status: 'fail', message: '권한이 없습니다.' });
+        res
+          .status(403)
+          .json({ status: 'fail', message: 'You do not have permission.' });
         return;
       }
 
@@ -34,7 +36,7 @@ export const checkClassRole = (allowedRoles: string[]) => {
     } catch (error) {
       res
         .status(500)
-        .json({ status: 'error', message: '서버 오류가 발생했습니다.' });
+        .json({ status: 'error', message: 'Server error occurred.' });
     }
   };
 };

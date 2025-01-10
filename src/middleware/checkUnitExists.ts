@@ -11,7 +11,7 @@ export const checkUnitExists = async (
 
     const unit = await Unit.findByPk(unitId);
     if (!unit) {
-      res.status(404).json({ message: '존재하지 않는 단원입니다.' });
+      res.status(404).json({ message: 'The unit does not exist.' });
       return;
     }
 
@@ -19,7 +19,7 @@ export const checkUnitExists = async (
   } catch (error) {
     res.status(500).json({
       status: 'error',
-      message: '단원 조회에 실패했습니다.',
+      message: 'Server error occurred.',
       error: (error as Error).message,
     });
   }

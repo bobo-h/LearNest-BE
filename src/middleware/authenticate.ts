@@ -10,7 +10,7 @@ export const authenticate = (
 ): void => {
   const token = req.headers.authorization?.split(' ')[1];
   if (!token) {
-    res.status(401).json({ status: 'fail', message: '토큰이 필요합니다.' });
+    res.status(401).json({ status: 'fail', message: 'Token is required.' });
     return;
   }
 
@@ -19,8 +19,6 @@ export const authenticate = (
     req.user = { id: decoded.id };
     next();
   } catch (error) {
-    res
-      .status(401)
-      .json({ status: 'fail', message: '유효하지 않은 토큰입니다.' });
+    res.status(401).json({ status: 'fail', message: 'Server error occurred.' });
   }
 };

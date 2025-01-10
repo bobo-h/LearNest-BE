@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import Unit from '../models/Unit';
 import Subunit from '../models/Subunit';
-import sequelize from '../database';
 
 export const createUnit = async (
   req: Request,
@@ -14,7 +13,7 @@ export const createUnit = async (
     if (!name) {
       res.status(400).json({
         status: 'fail',
-        message: '단원명은 필수 입력 값입니다.',
+        message: 'Unit name is a required field.',
       });
       return;
     }
@@ -22,13 +21,13 @@ export const createUnit = async (
     const newUnit = await Unit.create({ class_id, name, description });
     res.status(201).json({
       status: 'success',
-      message: '단원이 성공적으로 생성되었습니다.',
+      message: 'Unit created successfully.',
       unit: newUnit,
     });
   } catch (error) {
     res.status(500).json({
       status: 'error',
-      message: '단원 생성 중 오류가 발생했습니다.',
+      message: 'Internal server error occurred.',
       error: (error as Error).message,
     });
   }
@@ -46,7 +45,7 @@ export const updateUnit = async (
     if (!unit) {
       res.status(404).json({
         status: 'fail',
-        message: '단원을 찾을 수 없습니다.',
+        message: 'Unit not found.',
       });
       return;
     }
@@ -54,7 +53,7 @@ export const updateUnit = async (
     if (unit.deleted_at) {
       res.status(400).json({
         status: 'fail',
-        message: '삭제된 단원은 수정할 수 없습니다.',
+        message: 'Deleted units cannot be modified.',
       });
       return;
     }
@@ -62,13 +61,13 @@ export const updateUnit = async (
     await unit.update({ name, description });
     res.status(200).json({
       status: 'success',
-      message: '단원이 성공적으로 수정되었습니다.',
+      message: 'Unit updated successfully.',
       unit,
     });
   } catch (error) {
     res.status(500).json({
       status: 'error',
-      message: '단원 수정 중 오류가 발생했습니다.',
+      message: 'Internal server error occurred.',
       error: (error as Error).message,
     });
   }
@@ -85,7 +84,7 @@ export const deleteUnit = async (
     if (!unit) {
       res.status(404).json({
         status: 'fail',
-        message: '단원을 찾을 수 없습니다.',
+        message: 'Unit not found.',
       });
       return;
     }
@@ -94,12 +93,12 @@ export const deleteUnit = async (
 
     res.status(200).json({
       status: 'success',
-      message: '단원이 성공적으로 삭제되었습니다.',
+      message: 'Unit deleted successfully.',
     });
   } catch (error) {
     res.status(500).json({
       status: 'error',
-      message: '단원 삭제 중 오류가 발생했습니다.',
+      message: 'Internal server error occurred.',
       error: (error as Error).message,
     });
   }
@@ -126,13 +125,13 @@ export const getUnitsWithSubunits = async (
 
     res.status(200).json({
       status: 'success',
-      message: '단원 및 소단원이 성공적으로 조회되었습니다.',
+      message: 'Units and subunits retrieved successfully.',
       units,
     });
   } catch (error) {
     res.status(500).json({
       status: 'error',
-      message: '단원 및 소단원 조회 중 오류가 발생했습니다.',
+      message: 'Internal server error occurred.',
       error: (error as Error).message,
     });
   }
@@ -153,7 +152,7 @@ export const getUnitDetails = async (
     if (!unit) {
       res.status(404).json({
         status: 'fail',
-        message: '단원을 찾을 수 없습니다.',
+        message: 'Unit not found.',
       });
       return;
     }
@@ -165,7 +164,7 @@ export const getUnitDetails = async (
   } catch (error) {
     res.status(500).json({
       status: 'error',
-      message: '단원 상세 정보를 가져오는 중 오류가 발생했습니다.',
+      message: 'Internal server error occurred.',
       error: (error as Error).message,
     });
   }

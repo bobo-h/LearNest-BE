@@ -17,7 +17,7 @@ export const createClass = async (
       res.status(403).json({
         status: 'fail',
         code: 403,
-        message: '클래스 생성 권한이 없습니다.',
+        message: 'You do not have permission to create a class.',
       });
       return;
     }
@@ -26,7 +26,7 @@ export const createClass = async (
       res.status(400).json({
         status: 'fail',
         code: 400,
-        message: 'Class Name은 필수 입력 값입니다.',
+        message: 'Class Name is a required field.',
       });
       return;
     }
@@ -36,7 +36,7 @@ export const createClass = async (
       res.status(409).json({
         status: 'fail',
         code: 409,
-        message: '중복된 클래스 이름입니다.',
+        message: 'Duplicate class name found.',
       });
       return;
     }
@@ -65,7 +65,7 @@ export const createClass = async (
 
     res.status(201).json({
       status: 'success',
-      message: '클래스 생성 성공',
+      message: 'Class creation successful.',
       class: {
         id: newClass.id,
         name: newClass.name,
@@ -81,7 +81,7 @@ export const createClass = async (
     res.status(500).json({
       status: 'error',
       code: 500,
-      message: '서버 내부 오류가 발생했습니다.',
+      message: 'Internal server error occurred.',
       error: (error as Error).message,
     });
   }
@@ -97,7 +97,7 @@ export const getUserClasses = async (
       res.status(403).json({
         status: 'fail',
         code: 403,
-        message: '사용자 인증이 필요합니다.',
+        message: 'User authentication is required.',
       });
       return;
     }
@@ -132,7 +132,7 @@ export const getUserClasses = async (
     res.status(500).json({
       status: 'error',
       code: 500,
-      message: '클래스 조회 중 오류가 발생했습니다.',
+      message: 'Internal server error occurred.',
       error: (error as Error).message,
     });
   }

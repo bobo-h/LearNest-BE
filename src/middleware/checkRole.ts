@@ -10,9 +10,7 @@ export const checkRole = (requiredRole: 'admin' | 'user') => {
     try {
       const userId = req.user?.id;
       if (!userId) {
-        res
-          .status(401)
-          .json({ status: 'fail', message: '인증되지 않았습니다.' });
+        res.status(401).json({ status: 'fail', message: 'Invalid request.' });
         return;
       }
 
@@ -20,7 +18,7 @@ export const checkRole = (requiredRole: 'admin' | 'user') => {
       if (!user || user.role !== requiredRole) {
         res
           .status(403)
-          .json({ status: 'fail', message: '접근 권한이 없습니다.' });
+          .json({ status: 'fail', message: 'You do not have permission.' });
         return;
       }
 
@@ -28,7 +26,7 @@ export const checkRole = (requiredRole: 'admin' | 'user') => {
     } catch (error) {
       res
         .status(500)
-        .json({ status: 'error', message: '서버 오류가 발생했습니다.' });
+        .json({ status: 'error', message: 'Server error occurred.' });
     }
   };
 };

@@ -50,7 +50,7 @@ export const updateSubunit = async (
     if (subunit.deleted_at) {
       res.status(400).json({
         status: 'fail',
-        message: '삭제된 소단원은 수정할 수 없습니다.',
+        message: 'Deleted subunits cannot be modified.',
       });
       return;
     }
@@ -105,7 +105,7 @@ export const getSubunitDetails = async (
     if (!subunit) {
       res.status(404).json({
         status: 'fail',
-        message: '소단원을 찾을 수 없습니다.',
+        message: 'Subunit not found.',
       });
       return;
     }
@@ -117,7 +117,7 @@ export const getSubunitDetails = async (
   } catch (error) {
     res.status(500).json({
       status: 'error',
-      message: '소단원 상세 정보를 가져오는 중 오류가 발생했습니다.',
+      message: 'Internal server error occurred.',
       error: (error as Error).message,
     });
   }
