@@ -5,7 +5,7 @@ import Invite from '../models/Invite';
 import ClassMember from '../models/ClassMember';
 
 const JWT_SECRET = process.env.JWT_SECRET_KEY || 'defaultsecret';
-const BASE_URL = process.env.BASE_URL;
+const FRONT_URL = process.env.FRONT_DEPLOY_URL;
 
 export const createInvite = async (
   req: Request,
@@ -37,7 +37,7 @@ export const createInvite = async (
       { expiresIn: '7d' },
     );
 
-    const inviteLink = `${BASE_URL}/invite/${class_id}/accept/${token}`;
+    const inviteLink = `${FRONT_URL}/invite/${class_id}/accept/${token}`;
 
     res.status(201).json({
       status: 'success',
