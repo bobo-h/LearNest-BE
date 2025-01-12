@@ -31,6 +31,10 @@ app.use(cors(corsOptions));
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
+app.get('/', (req: Request, res: Response) => {
+  res.send('Server is running successfully!');
+});
+
 app.use('/api', indexRouter);
 
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
