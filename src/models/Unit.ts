@@ -4,6 +4,7 @@ import sequelize from '../database';
 interface UnitAttributes {
   id: number;
   class_id: number;
+  sort_order: number;
   name: string;
   description?: string | null;
   created_at?: Date;
@@ -22,6 +23,7 @@ class Unit
 {
   public id!: number;
   public class_id!: number;
+  public sort_order!: number;
   public name!: string;
   public description!: string | null;
   public readonly created_at!: Date;
@@ -39,6 +41,7 @@ Unit.init(
     class_id: { type: DataTypes.INTEGER, allowNull: false },
     name: { type: DataTypes.STRING(100), allowNull: false },
     description: { type: DataTypes.TEXT, allowNull: true },
+    sort_order: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 },
     deleted_at: { type: DataTypes.DATE, allowNull: true },
   },
   {

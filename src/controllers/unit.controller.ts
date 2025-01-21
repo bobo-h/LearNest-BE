@@ -51,14 +51,17 @@ export const getUnitsWithSubunits = async (
           attributes: [
             'id',
             'unit_id',
+            'sort_order',
             'name',
             'description',
             'content',
             'materials_path',
           ],
+          order: [['sort_order', 'ASC']],
         },
       ],
-      attributes: ['id', 'name', 'description'],
+      attributes: ['id', 'sort_order', 'name', 'description'],
+      order: [['sort_order', 'ASC']],
     });
 
     res.status(200).json({
@@ -97,6 +100,7 @@ export const fetchUnitsWithSubunits = async (
           unitInstance = await Unit.create(
             {
               class_id,
+              sort_order: unit.sort_order,
               name: unit.name,
               description: unit.description,
             },
@@ -108,6 +112,7 @@ export const fetchUnitsWithSubunits = async (
             await unitInstance.update(
               {
                 name: unit.name,
+                sort_order: unit.sort_order,
                 description: unit.description,
               },
               { transaction },
@@ -125,6 +130,7 @@ export const fetchUnitsWithSubunits = async (
               await Subunit.create(
                 {
                   unit_id: unitInstance?.id || unit.id,
+                  sort_order: subunit.sort_order,
                   name: subunit.name,
                   description: subunit.description,
                   content: subunit.content,
@@ -137,6 +143,7 @@ export const fetchUnitsWithSubunits = async (
               if (subunitInstance) {
                 await subunitInstance.update(
                   {
+                    sort_order: subunit.sort_order,
                     name: subunit.name,
                     description: subunit.description,
                     content: subunit.content,

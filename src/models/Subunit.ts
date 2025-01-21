@@ -4,6 +4,7 @@ import sequelize from '../database';
 interface SubunitAttributes {
   id: number;
   unit_id: number;
+  sort_order: number;
   name: string;
   description?: string | null;
   content?: any | null;
@@ -30,6 +31,7 @@ class Subunit
 {
   public id!: number;
   public unit_id!: number;
+  public sort_order!: number;
   public name!: string;
   public description!: string | null;
   public content!: any | null;
@@ -47,6 +49,7 @@ Subunit.init(
       primaryKey: true,
     },
     unit_id: { type: DataTypes.INTEGER, allowNull: false },
+    sort_order: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 },
     name: { type: DataTypes.STRING(100), allowNull: false },
     description: { type: DataTypes.TEXT, allowNull: true },
     content: { type: DataTypes.JSON, allowNull: true },
