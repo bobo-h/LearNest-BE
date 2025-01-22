@@ -1,5 +1,6 @@
 import { DataTypes, Model, Optional } from 'sequelize';
 import sequelize from '../database';
+import Subunit from './Subunit';
 
 interface UnitAttributes {
   id: number;
@@ -10,6 +11,7 @@ interface UnitAttributes {
   created_at?: Date;
   updated_at?: Date;
   deleted_at?: Date | null;
+  subunits?: Subunit[];
 }
 
 type UnitCreationAttributes = Optional<
@@ -29,6 +31,7 @@ class Unit
   public readonly created_at!: Date;
   public readonly updated_at!: Date;
   public readonly deleted_at!: Date | null;
+  public subunits?: Subunit[];
 }
 
 Unit.init(

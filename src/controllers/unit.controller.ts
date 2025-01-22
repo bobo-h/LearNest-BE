@@ -64,10 +64,25 @@ export const getUnitsWithSubunits = async (
       order: [['sort_order', 'ASC']],
     });
 
+    // JSON 문자열을 역직렬화(Deserialization)
+    const parsedUnits = units.map((unit) => {
+      const unitWithSubunits = unit.toJSON() as Unit & { subunits?: Subunit[] };
+      return {
+        ...unitWithSubunits,
+        subunits: unitWithSubunits.subunits?.map((subunit) => ({
+          ...subunit,
+          content: subunit.content ? JSON.parse(subunit.content) : null,
+          materials_path: subunit.materials_path
+            ? JSON.parse(subunit.materials_path)
+            : null,
+        })),
+      };
+    });
+
     res.status(200).json({
       status: 'success',
       message: 'Units and subunits retrieved successfully.',
-      units,
+      units: parsedUnits,
     });
   } catch (error) {
     res.status(500).json({
