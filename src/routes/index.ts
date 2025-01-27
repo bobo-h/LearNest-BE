@@ -11,7 +11,7 @@ const router = Router();
 router.use('/auth', authRoutes);
 router.use('/users', userRoutes);
 router.use('/classes', classRoutes);
-router.use('/invite', inviteRoutes);
+router.use('/classes/:classId/invite', inviteRoutes);
 router.use('/classes/:classId/units', unitRoutes);
 router.use('/classes/:classId/units/:unitId/subunits', subunitRoutes);
 

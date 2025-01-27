@@ -37,7 +37,7 @@ export const createInvite = async (
       { expiresIn: '7d' },
     );
 
-    const inviteLink = `${FRONT_URL}/invite/${class_id}/accept/${token}`;
+    const inviteLink = `${FRONT_URL}/classes/${class_id}/invite/${token}`;
 
     res.status(201).json({
       status: 'success',
