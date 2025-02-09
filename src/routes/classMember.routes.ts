@@ -1,22 +1,22 @@
 import { Router } from 'express';
 import {
-  getUnitDetails,
-  getUnitsWithDetails,
-  batchProcessUnits,
-} from '../controllers/unit.controller';
+  getClassMembers,
+  leaveClass,
+  removeMember,
+} from '../controllers/classMember.controller';
 import { authenticate } from '../middleware/authenticate';
 import { checkClassRole } from '../middleware/checkClassRole';
 import { checkClassMember } from '../middleware/checkClassMember';
 
 const router = Router({ mergeParams: true });
 
-router.get('/:id', authenticate, checkClassMember, getUnitDetails);
-router.get('/', authenticate, checkClassMember, getUnitsWithDetails);
-router.post(
-  '/',
+router.delete('/', authenticate, checkClassMember, leaveClass);
+router.delete(
+  '/:id',
   authenticate,
   checkClassRole(['instructor']),
-  batchProcessUnits,
+  removeMember,
 );
+router.get('/', authenticate, checkClassRole(['instructor']), getClassMembers);
 
 export default router;

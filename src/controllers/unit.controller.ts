@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import sequelize from '../database';
-import { Unit, Subunit } from '../models';
+import { Unit, Subunit, Assignment } from '../models';
 
 export const getUnitDetails = async (
   req: Request,
@@ -35,7 +35,7 @@ export const getUnitDetails = async (
   }
 };
 
-export const getUnitsWithSubunits = async (
+export const getUnitsWithDetails = async (
   req: Request,
   res: Response,
 ): Promise<void> => {
@@ -57,6 +57,21 @@ export const getUnitsWithSubunits = async (
             'content',
             'materials_path',
           ],
+          include: [
+            {
+              model: Assignment,
+              as: 'assignments',
+              attributes: [
+                'id',
+                'subunit_id',
+                'title',
+                'content',
+                'attachment',
+                'created_at',
+              ],
+              order: [['created_at', 'ASC']],
+            },
+          ],
           order: [['sort_order', 'ASC']],
         },
       ],
@@ -64,24 +79,11 @@ export const getUnitsWithSubunits = async (
       order: [['sort_order', 'ASC']],
     });
 
-    // JSON 문자열을 역직렬화(Deserialization)
-    const parsedUnits = units.map((unit) => {
-      const unitWithSubunits = unit.toJSON() as Unit & { subunits?: Subunit[] };
-      return {
-        ...unitWithSubunits,
-        subunits: unitWithSubunits.subunits?.map((subunit) => ({
-          ...subunit,
-          content: subunit.content ? JSON.parse(subunit.content) : null,
-          materials_path: subunit.materials_path
-            ? JSON.parse(subunit.materials_path)
-            : null,
-        })),
-      };
-    });
+    const parsedUnits = units.map((unit) => unit.toJSON());
 
     res.status(200).json({
       status: 'success',
-      message: 'Units and subunits retrieved successfully.',
+      message: 'Units, subunits, and assignments retrieved successfully.',
       units: parsedUnits,
     });
   } catch (error) {
@@ -93,7 +95,7 @@ export const getUnitsWithSubunits = async (
   }
 };
 
-export const fetchUnitsWithSubunits = async (
+export const batchProcessUnits = async (
   req: Request,
   res: Response,
 ): Promise<void> => {
@@ -141,8 +143,10 @@ export const fetchUnitsWithSubunits = async (
         // 소단원 처리
         if (unit.subunits && Array.isArray(unit.subunits)) {
           for (const subunit of unit.subunits) {
+            let subunitInstance;
+
             if (subunit.type === 'create') {
-              await Subunit.create(
+              subunitInstance = await Subunit.create(
                 {
                   unit_id: unitInstance?.id || unit.id,
                   sort_order: subunit.sort_order,
@@ -154,7 +158,7 @@ export const fetchUnitsWithSubunits = async (
                 { transaction },
               );
             } else if (subunit.type === 'update') {
-              const subunitInstance = await Subunit.findByPk(subunit.id);
+              subunitInstance = await Subunit.findByPk(subunit.id);
               if (subunitInstance) {
                 await subunitInstance.update(
                   {
@@ -168,10 +172,44 @@ export const fetchUnitsWithSubunits = async (
                 );
               }
             } else if (subunit.type === 'delete') {
-              await Subunit.destroy({
-                where: { id: subunit.id },
-                transaction,
-              });
+              await Subunit.destroy({ where: { id: subunit.id }, transaction });
+              continue; // 삭제 시에는 과제 처리 생략
+            }
+
+            // 과제(Assignment) 처리
+            if (subunit.assignments && Array.isArray(subunit.assignments)) {
+              for (const assignment of subunit.assignments) {
+                if (assignment.type === 'create') {
+                  await Assignment.create(
+                    {
+                      subunit_id: subunitInstance?.id || subunit.id,
+                      title: assignment.title,
+                      content: assignment.content,
+                      attachment: assignment.attachment || null,
+                    },
+                    { transaction },
+                  );
+                } else if (assignment.type === 'update') {
+                  const assignmentInstance = await Assignment.findByPk(
+                    assignment.id,
+                  );
+                  if (assignmentInstance) {
+                    await assignmentInstance.update(
+                      {
+                        title: assignment.title,
+                        content: assignment.content,
+                        attachment: assignment.attachment || null,
+                      },
+                      { transaction },
+                    );
+                  }
+                } else if (assignment.type === 'delete') {
+                  await Assignment.destroy({
+                    where: { id: assignment.id },
+                    transaction,
+                  });
+                }
+              }
             }
           }
         }

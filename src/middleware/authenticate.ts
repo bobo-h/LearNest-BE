@@ -15,8 +15,11 @@ export const authenticate = (
   }
 
   try {
-    const decoded = jwt.verify(token, JWT_SECRET) as { id: number };
-    req.user = { id: decoded.id };
+    const decoded = jwt.verify(token, JWT_SECRET) as {
+      id: number;
+      role: string;
+    };
+    req.user = { id: decoded.id, role: decoded.role };
     next();
   } catch (error) {
     res.status(401).json({ status: 'fail', message: 'Server error occurred.' });

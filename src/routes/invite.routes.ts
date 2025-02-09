@@ -1,8 +1,7 @@
 import { Router } from 'express';
-import { createInvite } from '../controllers/invite.controller';
+import { createInvite, joinClass } from '../controllers/invite.controller';
 import { authenticate } from '../middleware/authenticate';
 import { checkClassRole } from '../middleware/checkClassRole';
-import { joinClass } from '../controllers/invite.controller';
 
 const router = Router({ mergeParams: true });
 
