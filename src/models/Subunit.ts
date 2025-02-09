@@ -1,5 +1,6 @@
 import { DataTypes, Model, Optional } from 'sequelize';
 import sequelize from '../database';
+import Assignment from './Assignment';
 
 interface SubunitAttributes {
   id: number;
@@ -7,11 +8,12 @@ interface SubunitAttributes {
   sort_order: number;
   name: string;
   description?: string | null;
-  content?: any | null;
+  content?: object | null;
   materials_path?: string | null;
   created_at?: Date;
   updated_at?: Date;
   deleted_at?: Date | null;
+  assignment?: Assignment[];
 }
 
 type SubunitCreationAttributes = Optional<
@@ -34,11 +36,12 @@ class Subunit
   public sort_order!: number;
   public name!: string;
   public description!: string | null;
-  public content!: any | null;
+  public content!: object | null;
   public materials_path!: string | null;
   public readonly created_at!: Date;
   public readonly updated_at!: Date;
   public readonly deleted_at!: Date | null;
+  public assignments?: Assignment[];
 }
 
 Subunit.init(
