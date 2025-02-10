@@ -59,17 +59,11 @@ export const getClassMembers = async (
       order: [['joined_at', 'ASC']],
     });
 
-    if (!members.length) {
-      res.status(400).json({
-        status: 'error',
-        message: 'No members found for this class.',
-      });
-      return;
-    }
-
     res.status(200).json({
       status: 'success',
-      message: 'Class members retrieved successfully.',
+      message: members.length
+        ? 'Class members retrieved successfully.'
+        : 'No members found for this class.',
       members,
     });
   } catch (error) {
