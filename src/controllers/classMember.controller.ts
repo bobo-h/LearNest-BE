@@ -4,32 +4,6 @@ import User from './../models/User';
 import Progress from '../models/Progress';
 import { Op } from 'sequelize';
 
-export const leaveClass = async (
-  req: Request,
-  res: Response,
-): Promise<void> => {
-  try {
-    const userId = req.user?.id;
-    const { classId } = req.params;
-
-    await ClassMember.destroy({
-      where: { user_id: userId, class_id: classId },
-    });
-
-    res.status(200).json({
-      status: 'success',
-      message: 'You have successfully left the class.',
-    });
-  } catch (error) {
-    console.error('Error leaving class:', error);
-    res.status(500).json({
-      status: 'error',
-      message: 'Internal server error occurred.',
-      error: (error as Error).message,
-    });
-  }
-};
-
 export const removeMember = async (
   req: Request,
   res: Response,
@@ -73,16 +47,25 @@ export const getClassMembers = async (
     const { classId } = req.params;
 
     const members = await ClassMember.findAll({
-      where: { class_id: classId },
+      where: { class_id: classId, role: { [Op.ne]: 'instructor' } },
       include: [
         {
           model: User,
+          as: 'user',
           attributes: ['id', 'name', 'email'],
         },
       ],
-      attributes: ['id', 'user_id', 'class_id', 'role', 'createdAt'],
-      order: [['createdAt', 'ASC']],
+      attributes: ['id', 'user_id', 'class_id', 'role', 'joined_at'],
+      order: [['joined_at', 'ASC']],
     });
+
+    if (!members.length) {
+      res.status(400).json({
+        status: 'error',
+        message: 'No members found for this class.',
+      });
+      return;
+    }
 
     res.status(200).json({
       status: 'success',

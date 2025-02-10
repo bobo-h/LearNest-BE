@@ -1,3 +1,4 @@
+import User from './User';
 import Class from './Class';
 import ClassMember from './ClassMember';
 import Unit from './Unit';
@@ -8,6 +9,9 @@ import Progress from './Progress';
 
 Class.hasMany(ClassMember, { foreignKey: 'class_id', as: 'members' });
 ClassMember.belongsTo(Class, { foreignKey: 'class_id', as: 'class' });
+
+User.hasMany(ClassMember, { foreignKey: 'user_id', as: 'classMembers' });
+ClassMember.belongsTo(User, { foreignKey: 'user_id', as: 'user' });
 
 Class.hasMany(Unit, { foreignKey: 'class_id', as: 'units' });
 Unit.belongsTo(Class, { foreignKey: 'class_id', as: 'class' });

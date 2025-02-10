@@ -258,3 +258,29 @@ export const deleteClass = async (
     });
   }
 };
+
+export const leaveClass = async (
+  req: Request,
+  res: Response,
+): Promise<void> => {
+  try {
+    const userId = req.user?.id;
+    const { classId } = req.params;
+
+    await ClassMember.destroy({
+      where: { user_id: userId, class_id: classId },
+    });
+
+    res.status(200).json({
+      status: 'success',
+      message: 'You have successfully left the class.',
+    });
+  } catch (error) {
+    console.error('Error leaving class:', error);
+    res.status(500).json({
+      status: 'error',
+      message: 'Internal server error occurred.',
+      error: (error as Error).message,
+    });
+  }
+};
