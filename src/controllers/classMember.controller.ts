@@ -1,7 +1,12 @@
 import { Request, Response } from 'express';
-import ClassMember from '../models/ClassMember';
-import User from './../models/User';
-import Progress from '../models/Progress';
+import {
+  Assignment,
+  Subunit,
+  Unit,
+  User,
+  ClassMember,
+  Submission,
+} from '../models';
 import { Op } from 'sequelize';
 
 export const removeMember = async (
@@ -71,6 +76,62 @@ export const getClassMembers = async (
     res.status(500).json({
       status: 'error',
       message: 'Internal server error occurred.',
+      error: (error as Error).message,
+    });
+  }
+};
+
+export const getSubmissionsByStudent = async (
+  req: Request,
+  res: Response,
+): Promise<void> => {
+  try {
+    const { classId, userId } = req.params;
+
+    const units = await Unit.findAll({
+      where: { class_id: classId },
+      attributes: ['id', 'name'],
+      include: [
+        {
+          model: Subunit,
+          as: 'subunits',
+          attributes: ['id', 'name'],
+          include: [
+            {
+              model: Assignment,
+              as: 'assignments',
+              attributes: ['id', 'title', 'content'],
+              include: [
+                {
+                  model: Submission,
+                  as: 'submissions',
+                  where: { user_id: userId },
+                  required: false,
+                  attributes: [
+                    'id',
+                    'content',
+                    'status',
+                    'feedback',
+                    'reviewed_at',
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    });
+
+    res.status(200).json({
+      status: 'success',
+      message: 'Assignments and submissions retrieved successfully.',
+      data: units,
+    });
+  } catch (error) {
+    console.error('Error fetching student submissions:', error);
+    res.status(500).json({
+      status: 'error',
+      message: 'An internal server error occurred.',
       error: (error as Error).message,
     });
   }

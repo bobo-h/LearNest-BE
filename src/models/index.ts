@@ -46,4 +46,13 @@ Progress.belongsTo(Unit, { foreignKey: 'unit_id', as: 'unit' });
 Subunit.hasMany(Progress, { foreignKey: 'subunit_id', as: 'progress' });
 Progress.belongsTo(Subunit, { foreignKey: 'subunit_id', as: 'subunit' });
 
-export { Class, ClassMember, Unit, Subunit, Assignment, Submission, Progress };
+export {
+  User,
+  Class,
+  ClassMember,
+  Unit,
+  Subunit,
+  Assignment,
+  Submission,
+  Progress,
+};

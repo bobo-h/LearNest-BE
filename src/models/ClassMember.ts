@@ -15,7 +15,7 @@ type ClassMemberCreationAttributes = Optional<
   'id' | 'joined_at' | 'deleted_at'
 >;
 
-export class ClassMember
+class ClassMember
   extends Model<ClassMemberAttributes, ClassMemberCreationAttributes>
   implements ClassMemberAttributes
 {
