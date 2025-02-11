@@ -2,7 +2,7 @@ import { Router } from 'express';
 import {
   getClassMembers,
   removeMember,
-  getSubmissionsByStudent,
+  getSubmissionsByMember,
 } from '../controllers/classMember.controller';
 import { authenticate } from '../middleware/authenticate';
 import { checkClassRole } from '../middleware/checkClassRole';
@@ -20,7 +20,7 @@ router.get(
   '/:userId/submissions',
   authenticate,
   checkClassRole(['instructor']),
-  getSubmissionsByStudent,
+  getSubmissionsByMember,
 );
 
 export default router;

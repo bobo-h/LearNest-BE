@@ -81,51 +81,50 @@ export const getClassMembers = async (
   }
 };
 
-export const getSubmissionsByStudent = async (
+export const getSubmissionsByMember = async (
   req: Request,
   res: Response,
 ): Promise<void> => {
   try {
     const { classId, userId } = req.params;
 
-    const units = await Unit.findAll({
-      where: { class_id: classId },
-      attributes: ['id', 'name'],
+    const assignments = await Assignment.findAll({
       include: [
         {
+          model: Submission,
+          as: 'submissions',
+          where: { user_id: userId },
+          required: false, // 과제 제출이 없는 경우에도 과제 정보는 유지
+          attributes: [
+            'id',
+            'content',
+            'attachment',
+            'status',
+            'feedback',
+            'reviewed_at',
+          ],
+        },
+        {
           model: Subunit,
-          as: 'subunits',
-          attributes: ['id', 'name'],
+          as: 'subunit',
+          attributes: [],
           include: [
             {
-              model: Assignment,
-              as: 'assignments',
-              attributes: ['id', 'title', 'content'],
-              include: [
-                {
-                  model: Submission,
-                  as: 'submissions',
-                  where: { user_id: userId },
-                  required: false,
-                  attributes: [
-                    'id',
-                    'content',
-                    'status',
-                    'feedback',
-                    'reviewed_at',
-                  ],
-                },
-              ],
+              model: Unit,
+              as: 'unit',
+              attributes: [],
+              where: { class_id: classId },
             },
           ],
         },
       ],
+      attributes: ['id', 'subunit_id'],
     });
 
     res.status(200).json({
       status: 'success',
       message: 'Assignments and submissions retrieved successfully.',
-      data: units,
+      data: assignments,
     });
   } catch (error) {
     console.error('Error fetching student submissions:', error);
