@@ -14,10 +14,10 @@ export const removeMember = async (
   res: Response,
 ): Promise<void> => {
   try {
-    const { classId, memberId } = req.params;
+    const { classId, userId } = req.params;
 
     const member = await ClassMember.findOne({
-      where: { user_id: memberId, class_id: classId },
+      where: { user_id: userId, class_id: classId },
     });
 
     if (!member) {

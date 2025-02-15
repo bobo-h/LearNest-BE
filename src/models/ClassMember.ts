@@ -57,10 +57,12 @@ ClassMember.init(
     sequelize,
     tableName: 'Class_Members',
     freezeTableName: true,
-    timestamps: false,
+    timestamps: true,
     underscored: true,
     paranoid: true,
     deletedAt: 'deleted_at',
+    createdAt: false,
+    updatedAt: false,
   },
 );
 

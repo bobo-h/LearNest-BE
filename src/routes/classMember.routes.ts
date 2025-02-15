@@ -10,7 +10,7 @@ import { checkClassRole } from '../middleware/checkClassRole';
 const router = Router({ mergeParams: true });
 
 router.delete(
-  '/:id',
+  '/:userId',
   authenticate,
   checkClassRole(['instructor']),
   removeMember,
