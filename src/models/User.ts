@@ -18,7 +18,7 @@ type UserCreationAttributes = Optional<
   'id' | 'created_at' | 'updated_at' | 'deleted_at'
 >;
 
-export class User
+class User
   extends Model<UserAttributes, UserCreationAttributes>
   implements UserAttributes
 {

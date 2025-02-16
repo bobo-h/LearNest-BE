@@ -25,7 +25,7 @@ type ClassCreationAttributes = Optional<
   | 'deleted_at'
 >;
 
-export class Class
+class Class
   extends Model<ClassAttributes, ClassCreationAttributes>
   implements ClassAttributes
 {

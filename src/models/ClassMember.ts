@@ -15,7 +15,7 @@ type ClassMemberCreationAttributes = Optional<
   'id' | 'joined_at' | 'deleted_at'
 >;
 
-export class ClassMember
+class ClassMember
   extends Model<ClassMemberAttributes, ClassMemberCreationAttributes>
   implements ClassMemberAttributes
 {
@@ -57,10 +57,12 @@ ClassMember.init(
     sequelize,
     tableName: 'Class_Members',
     freezeTableName: true,
-    timestamps: false,
+    timestamps: true,
     underscored: true,
     paranoid: true,
     deletedAt: 'deleted_at',
+    createdAt: false,
+    updatedAt: false,
   },
 );
 

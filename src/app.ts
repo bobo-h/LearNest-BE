@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import indexRouter from './routes/index';
 import './models';
+import { normalizeEmptyValues } from './middleware/normalizeEmpty';
 
 dotenv.config();
 
@@ -30,6 +31,7 @@ app.use(cors(corsOptions));
 
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
+app.use(normalizeEmptyValues);
 
 app.get('/', (req: Request, res: Response) => {
   res.send('Server is running successfully!');

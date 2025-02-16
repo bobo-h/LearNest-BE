@@ -1,44 +1,23 @@
 import { Request, Response } from 'express';
-import ClassMember from '../models/ClassMember';
-import User from './../models/User';
-import Progress from '../models/Progress';
+import {
+  Assignment,
+  Subunit,
+  Unit,
+  User,
+  ClassMember,
+  Submission,
+} from '../models';
 import { Op } from 'sequelize';
-
-export const leaveClass = async (
-  req: Request,
-  res: Response,
-): Promise<void> => {
-  try {
-    const userId = req.user?.id;
-    const { classId } = req.params;
-
-    await ClassMember.destroy({
-      where: { user_id: userId, class_id: classId },
-    });
-
-    res.status(200).json({
-      status: 'success',
-      message: 'You have successfully left the class.',
-    });
-  } catch (error) {
-    console.error('Error leaving class:', error);
-    res.status(500).json({
-      status: 'error',
-      message: 'Internal server error occurred.',
-      error: (error as Error).message,
-    });
-  }
-};
 
 export const removeMember = async (
   req: Request,
   res: Response,
 ): Promise<void> => {
   try {
-    const { classId, memberId } = req.params;
+    const { classId, userId } = req.params;
 
     const member = await ClassMember.findOne({
-      where: { user_id: memberId, class_id: classId },
+      where: { user_id: userId, class_id: classId },
     });
 
     if (!member) {
@@ -73,20 +52,23 @@ export const getClassMembers = async (
     const { classId } = req.params;
 
     const members = await ClassMember.findAll({
-      where: { class_id: classId },
+      where: { class_id: classId, role: { [Op.ne]: 'instructor' } },
       include: [
         {
           model: User,
+          as: 'user',
           attributes: ['id', 'name', 'email'],
         },
       ],
-      attributes: ['id', 'user_id', 'class_id', 'role', 'createdAt'],
-      order: [['createdAt', 'ASC']],
+      attributes: ['id', 'user_id', 'class_id', 'role', 'joined_at'],
+      order: [['joined_at', 'ASC']],
     });
 
     res.status(200).json({
       status: 'success',
-      message: 'Class members retrieved successfully.',
+      message: members.length
+        ? 'Class members retrieved successfully.'
+        : 'No members found for this class.',
       members,
     });
   } catch (error) {
@@ -99,39 +81,59 @@ export const getClassMembers = async (
   }
 };
 
-// export const getMembersProgress = async (req: Request, res: Response) => {
-//   try {
-//     const { classId } = req.params;
+export const getSubmissionsByMember = async (
+  req: Request,
+  res: Response,
+): Promise<void> => {
+  try {
+    const { classId, userId } = req.params;
 
-//     const members = await ClassMember.findAll({
-//       where: { class_id: classId },
-//       include: [{ model: User, attributes: ['id', 'name', 'role'] }],
-//     });
+    const assignmentIds = await Assignment.findAll({
+      include: [
+        {
+          model: Subunit,
+          as: 'subunit',
+          include: [
+            {
+              model: Unit,
+              as: 'unit',
+              where: { class_id: classId },
+            },
+          ],
+        },
+      ],
+      attributes: ['id'],
+    }).then((assignments) => assignments.map((a) => a.id));
 
-//     if (!members.length) {
-//       return res.status(404).json({ status: 'fail', message: 'No members found.' });
-//     }
+    const submissions = await Submission.findAll({
+      where: {
+        user_id: userId,
+        assignment_id: assignmentIds,
+      },
+      attributes: [
+        'id',
+        'assignment_id',
+        'content',
+        'attachment',
+        'status',
+        'feedback',
+        'reviewed_at',
+        'updated_at',
+      ],
+      order: [['updated_at', 'DESC']],
+    });
 
-//     const progressData = await Promise.all(
-//       members.map(async (member) => {
-//         const avgProgress = await Progress.findOne({
-//           where: { user_id: member.user_id, class_id: classId },
-//           attributes: [[Progress.sequelize.fn('AVG', Progress.sequelize.col('progress_percent')), 'average_progress']],
-//           raw: true,
-//         });
-
-//         return {
-//           user_id: member.user_id,
-//           name: member.User.name,
-//           role: member.User.role,
-//           average_progress: avgProgress?.average_progress || 0,
-//         };
-//       })
-//     );
-
-//     res.json(progressData);
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ status: 'error', message: 'Server error occurred.' });
-//   }
-// };
+    res.status(200).json({
+      status: 'success',
+      message: 'Submissions retrieved successfully.',
+      submissions,
+    });
+  } catch (error) {
+    console.error('Error fetching student submissions:', error);
+    res.status(500).json({
+      status: 'error',
+      message: 'An internal server error occurred.',
+      error: (error as Error).message,
+    });
+  }
+};
