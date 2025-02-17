@@ -6,7 +6,7 @@ export const getUserProfile = async (
   res: Response,
 ): Promise<void> => {
   try {
-    const { id } = req.params;
+    const id = req.user?.id;
 
     const user = await User.findByPk(id, {
       attributes: [
