@@ -31,6 +31,7 @@ export const getUserProfile = async (
 
     res.status(200).json({
       status: 'success',
+      message: 'User profile retrieved successfully.',
       user,
     });
   } catch (error) {
