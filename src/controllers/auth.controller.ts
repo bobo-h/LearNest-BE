@@ -46,7 +46,7 @@ export const signup = async (req: Request, res: Response): Promise<void> => {
     res.status(201).json({
       status: 'success',
       message: 'Signup successful.',
-      user: { name: newUser.name, role: newUser.role },
+      user: { name: newUser.name },
     });
   } catch (error) {
     res.status(500).json({
@@ -99,7 +99,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     res.status(200).json({
       status: 'success',
       message: 'Login successful.',
-      user: { name: user.name, role: user.role },
+      user: { name: user.name },
     });
   } catch (error) {
     res.status(500).json({
